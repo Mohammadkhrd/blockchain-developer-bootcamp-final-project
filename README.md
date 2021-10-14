@@ -21,7 +21,7 @@ to be eligible for participating in this lottery.
 2- when the lottery is close the winner will randomly select and all  the 
 contract's Ether will transfer to the winner.
 
-3- in phase1 only admin can close the lottery and every address just can have
+3- in phase1 only owner can close the lottery and every address just can have
 1 ticket (deposit only 0.1 ETH).
 
 # phase 2:

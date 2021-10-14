@@ -1,9 +1,10 @@
-pragma solidity ^0.8.0;
+// SPDX-License-Identifier: MIT
+
+pragma solidity 0.8.7;
 
 contract Lottery {
 
-    address public admin;
-    address[] public players;
+    address public owner;
 
     enum LotteryStatus {
         open,
@@ -15,24 +16,29 @@ contract Lottery {
     event Deposit(address player , uint value );
     event WithdrawMoney(address winner , uint value);
 
+    uint playerId = 0;
+    mapping(uint => address) public Players;
+
     constructor() {
-        admin = msg.sender;
+        owner = msg.sender;
     }
 
+
     function deposit() public payable {   
+        
 
         require (lotteryStatus == LotteryStatus.open);
         require (msg.value == 1 ether);
+        playerId += 1;
         
-        players.push(msg.sender);
-
+        Players[playerId] = msg.sender;
         emit Deposit(msg.sender,msg.value);
 
     }
 
     function random() private view returns (uint) {
 
-        return uint(keccak256(abi.encodePacked(block.timestamp , block.difficulty , msg.sender))) % players.length;
+        return uint(keccak256(abi.encodePacked(block.timestamp , block.difficulty , msg.sender))) % playerId;
 
     }
     
@@ -42,9 +48,9 @@ contract Lottery {
 
     
     function withdrawMoney() public {
-        require(msg.sender == admin);
+        require(msg.sender == owner);
 
-        address payable to = payable(players[random()]);
+        address payable to = payable (Players[playerId]);
         uint contractBalance = getBalance();
         to.transfer(contractBalance);
 
