@@ -58,5 +58,10 @@ contract Lottery {
         emit WithdrawMoney(to , contractBalance);
 
     }
+
+    function reOpenLottery() public {
+        require(msg.sender == owner);
+        lotteryStatus = LotteryStatus.open;
+    }
     
 }
