@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: MIT
-
 pragma solidity 0.8.7;
 
-contract Lottery {
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-    address public owner;
+contract Lottery is Ownable {
 
     enum LotteryStatus {
         open,
@@ -16,17 +15,15 @@ contract Lottery {
     event Deposit(address player , uint value );
     event WithdrawMoney(address winner , uint value);
 
-    uint playerId = 0;
+    uint playerId;
     mapping(uint => address) public Players;
 
     constructor() {
-        owner = msg.sender;
+         playerId = 0;
     }
-
 
     function deposit() public payable {   
         
-
         require (lotteryStatus == LotteryStatus.open);
         require (msg.value == 1 ether);
         playerId += 1;
@@ -46,9 +43,7 @@ contract Lottery {
         return address(this).balance;
     }
 
-    
-    function withdrawMoney() public {
-        require(msg.sender == owner);
+    function withdrawMoney() public onlyOwner {
 
         address payable to = payable (Players[playerId]);
         uint contractBalance = getBalance();
@@ -59,8 +54,7 @@ contract Lottery {
 
     }
 
-    function reOpenLottery() public {
-        require(msg.sender == owner);
+    function reOpenLottery() public onlyOwner {
         lotteryStatus = LotteryStatus.open;
     }
     
