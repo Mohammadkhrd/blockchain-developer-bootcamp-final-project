@@ -58,6 +58,7 @@ contract Lottery is Ownable {
 
     function reOpenLottery() public onlyOwner {
         lotteryStatus = LotteryStatus.open;
+        playerId = 0;
     }
     
 }
