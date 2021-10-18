@@ -48,7 +48,7 @@ contract('Lottery', async (accounts) => {
     })
 
     // for any deposit require (lotteryStatus == LotteryStatus.open); after withdrawMoney function (lotteryStatus = LotteryStatus.close);
-    it('Lottery should be close (users cant send any ETH)', async () => {
+    it('Lottery should be close (users cant send ETH)', async () => {
 
         try {
             await lottery.deposit({from: accounts[3], value: 1000000000000000000});
@@ -57,6 +57,16 @@ contract('Lottery', async (accounts) => {
             let balance = await lottery.getBalance();
             assert.equal (balance , 0000000000000000000)
         }
+
+    })
+    // function reOpenLottery() public onlyOwner {} 
+    it("Lottery should be reopen (users can send ETH)", async () => {
+
+        await lottery.reOpenLottery();
+        await lottery.deposit({from: accounts[1], value: 1000000000000000000});
+        let balance = await lottery.getBalance();
+
+        assert.equal(balance , 1000000000000000000)
 
     })
 
