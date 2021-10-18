@@ -33,9 +33,9 @@ contract Lottery is Ownable {
 
     }
 
-    function random() private view returns (uint) {
+    function _random() private view returns (uint) {
 
-        return uint(keccak256(abi.encodePacked(block.timestamp , block.difficulty , msg.sender))) % playerId;
+        return (uint(keccak256(abi.encodePacked(block.timestamp , block.difficulty , msg.sender))) % playerId) + 1;
 
     }
     
@@ -44,8 +44,10 @@ contract Lottery is Ownable {
     }
 
     function withdrawMoney() public onlyOwner {
-
-        address payable to = payable (Players[playerId]);
+        
+        uint winnerId = _random();
+        address payable to = payable (Players[winnerId]);
+        
         uint contractBalance = getBalance();
         to.transfer(contractBalance);
 
