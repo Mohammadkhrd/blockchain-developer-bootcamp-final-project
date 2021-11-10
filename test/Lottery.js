@@ -1,36 +1,30 @@
 const Lottery = artifacts.require("Lottery");
 
-
 contract('Lottery', async (accounts) => {
     let lottery;
 
     before(async () => {
         lottery = await Lottery.deployed();
     })
-
     // No one deposit ETH to the contract , so Lottery Contract balance should be 0;
     it('Lottery balance should starts with 0 ETH', async () => {
         let balance = await lottery.getBalance();
         assert.equal(balance, 0);
     })
-
     // function deposit() public payable {}
     it('Lottery balance should has 1 ETH after deposit', async () => {
         await lottery.deposit({from: accounts[1], value: 1000000000000000000});
         let balance = await lottery.getBalance()
         assert.equal(balance , 1000000000000000000);
     })
-
     // function deposit() public payable {}
     it('Lottery balance should has 2 ETH after deposit', async () => {
         await lottery.deposit({from: accounts[2], value: 1000000000000000000});
         let balance = await lottery.getBalance()
         assert.equal(balance , 2000000000000000000);
     })
-    
     // require (msg.value == 1 ether);
     it('User cant send more or less than one ETH', async () => {
-
         try {
             await lottery.deposit({from: accounts[3], value: 3000000000000000000});
         } 
@@ -39,14 +33,22 @@ contract('Lottery', async (accounts) => {
             assert.equal (balance , 2000000000000000000)
         }
     })
-
+    // require(_eligibile[msg.sender] == UserStatus.notDeposited);
+    it('User cant deposit more than once', async () => {
+        try {
+            await lottery.deposit({from: accounts[3], value: 1000000000000000000});
+        } 
+        catch(err) {  
+            let balance = await lottery.getBalance()
+            assert.equal (balance , 2000000000000000000)
+        }
+    })
     // function withdrawMoney() public {}
     it('Lottery balance should has 0 ETH after withdraw ', async () => {
         await lottery.withdrawMoney();
         let balance = await lottery.getBalance()
         assert.equal(balance , 0000000000000000000);
     })
-
     // for any deposit require (lotteryStatus == LotteryStatus.open); after withdrawMoney function (lotteryStatus = LotteryStatus.close);
     it('Lottery should be close (users cant send ETH)', async () => {
 
@@ -57,19 +59,28 @@ contract('Lottery', async (accounts) => {
             let balance = await lottery.getBalance();
             assert.equal (balance , 0000000000000000000)
         }
+    })
+    // reOpen function has onlyOwner access controll 
+    it('Only the owner of the contract can reOpen lottery', async () => {
 
+        try {
+            await lottery.reOpenLottery({from: accounts[2]});
+            await lottery.deposit({from: accounts[4], value: 1000000000000000000});
+        } 
+        catch(err) {  
+            let balance = await lottery.getBalance();
+            assert.equal (balance , 0000000000000000000)
+        }
     })
     // function reOpenLottery() public onlyOwner {} 
     it("Lottery should be reopen (users can send ETH)", async () => {
 
-        await lottery.reOpenLottery();
+        await lottery.reOpenLottery({from: accounts[0]});
         await lottery.deposit({from: accounts[4], value: 1000000000000000000});
         let balance = await lottery.getBalance();
 
         assert.equal(balance , 1000000000000000000)
-
     })
-
 })
 
 
