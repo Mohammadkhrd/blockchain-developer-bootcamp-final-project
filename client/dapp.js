@@ -180,6 +180,21 @@ deposit.onclick = async () => {
   
 }
 
+const pickWinner = document.getElementById('pick-winner');
+
+pickWinner.onclick = async () => {
+  await Lottery.methods.withdrawMoney().send({from: ethereum.selectedAddress})
+}
+
+const reopenLottery = document.getElementById('reopen-lottery');
+
+reopenLottery.onclick = async () => {
+  await Lottery.methods.reOpenLottery().send({from: ethereum.selectedAddress})
+}
+
+
+
+
 
 
 
